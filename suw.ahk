@@ -15,6 +15,7 @@ DetectHiddenWindows false
 
 LocalAppData := EnvGet("LocalAppData")
 ProgramFiles := EnvGet(A_Is64bitOS ? "ProgramW6432" : "ProgramFiles")
+ProgramX86 := EnvGet(A_Is64bitOS ? "ProgramFiles(x86)" : "ProgramFiles")
 
 ; Activar ventana si existe, o ejecutar app en otro caso.
 ActivateSingleOrRun(windowTitle, command, folder:="") {
@@ -37,13 +38,16 @@ ActivateSingleOrRun(windowTitle, command, folder:="") {
   }
 }
 
+MButton & 1::
 #1::{
   ActivateSingleOrRun(
     "ahk_exe Skype.exe",
-    "Skype"
+    ProgramX86 . "\Microsoft\Skype for Desktop\Skype.exe",
+    ProgramX86 . "\Microsoft\Skype for Desktop"
   )
 }
 
+MButton & 2::
 #2::{
   ActivateSingleOrRun(
     "ahk_exe slack.exe",
@@ -52,6 +56,7 @@ ActivateSingleOrRun(windowTitle, command, folder:="") {
   )
 }
 
+MButton & 3::
 #3::{
   ActivateSingleOrRun(
     "ahk_class TeamsWebView",
@@ -59,12 +64,23 @@ ActivateSingleOrRun(windowTitle, command, folder:="") {
   )
 }
 
+MButton & 4::
 #4::{
   ActivateSingleOrRun(
     "Webex",
     LocalAppData . "\CiscoSparkLauncher\CiscoCollabHost.exe",
     LocalAppData . "\CiscoSparkLauncher"
   )
+}
+
+GroupAdd("Social", "ahk_exe Skype.exe")
+GroupAdd("Social", "ahk_exe slack.exe")
+GroupAdd("Social", "ahk_class TeamsWebView")
+GroupAdd("Social", "Webex")
+
+MButton & º::
+#º::{
+  GroupActivate("Social")
 }
 
 ; Grupos de aplicaciones entre los que tabular
@@ -135,7 +151,8 @@ DeprecatedActivateGroupOrRun(windowGroup, command, folder:="") {
     }
   }
 }
-    
+
+MButton & t::
 #t::{
   ActivateGroupOrRun(
     "Terminal",
@@ -143,6 +160,7 @@ DeprecatedActivateGroupOrRun(windowGroup, command, folder:="") {
   )
 }
 
+MButton & w::
 #w::{
   ActivateGroupOrRun(
     "Web",
@@ -151,6 +169,7 @@ DeprecatedActivateGroupOrRun(windowGroup, command, folder:="") {
   )
 }
 
+MButton & c::
 #c::{
   ActivateGroupOrRun(
     "Code",
@@ -159,6 +178,7 @@ DeprecatedActivateGroupOrRun(windowGroup, command, folder:="") {
   )
 }
 
+MButton & e::
 #e::{
   ActivateGroupOrRun(
     "Email",
