@@ -2,10 +2,15 @@
 #SingleInstance
 
 ; He tratado de activar webex y otros con DetectHiddenWindows = true,
-; WinShow y WinActivate, pero no redibuja la venta. No sé si habrá que
-; mandar alfuna orden de draw adicional...
+; WinShow y WinActivate, pero no redibuja la venta. Es posible que
+; esté detectando y activando alguna ventana oculta que usa la app
+; por debajo, al ser una aplicación basada en webview.
 ; En general, lo que mejor me ha funcionado es no detectar las hidden
 ; windows, y si está hidden, volver a ejecutar el comando con Run.
+;
+; Nota: El problema de no detectar hidden windows, es que tampoco detecta
+; las cloacked, que son las que están en otro escritorio. Así que no
+; puedo conmutar ventanas entre escritorios.
 DetectHiddenWindows false
 
 LocalAppData := EnvGet("LocalAppData")
