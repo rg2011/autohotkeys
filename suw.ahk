@@ -103,7 +103,7 @@ ActivateManyWindows(windowTitle, command, folder:="") {
 #e::{
   ActivateManyWindows(
     "ahk_exe OUTLOOK.EXE",
-    Run ProgramFiles . "\Microsoft Office\root\Office16\OUTLOOK.EXE"
+    ProgramFiles . "\Microsoft Office\root\Office16\OUTLOOK.EXE"
   )
 }
 
