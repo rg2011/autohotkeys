@@ -11,7 +11,8 @@ DetectHiddenWindows false
 LocalAppData := EnvGet("LocalAppData")
 ProgramFiles := EnvGet(A_Is64bitOS ? "ProgramW6432" : "ProgramFiles")
 
-ActivateSingleWindow(windowTitle, command, folder:="") {
+; Activar ventana si existe, o ejecutar app en otro caso.
+ActivateSingleOrRun(windowTitle, command, folder:="") {
   if WinExist(windowTitle) {
     minimized := WinGetMinMax()
     if minimized == -1 {
@@ -24,10 +25,89 @@ ActivateSingleWindow(windowTitle, command, folder:="") {
     } else {
       Run command
     }
+    handle := WinWait(windowTitle, , 3)
+    if handle != 0 {
+      WinActivate
+    }
   }
 }
 
-ActivateManyWindows(windowTitle, command, folder:="") {
+#1::{
+  ActivateSingleOrRun(
+    "ahk_exe Skype.exe",
+    "Skype"
+  )
+}
+
+#2::{
+  ActivateSingleOrRun(
+    "ahk_exe slack.exe",
+    LocalAppData . "\slack\slack.exe",
+    LocalAppData . "\slack"
+  )
+}
+
+#3::{
+  ActivateSingleOrRun(
+    "ahk_class TeamsWebView",
+    "ms-teams"
+  )
+}
+
+#4::{
+  ActivateSingleOrRun(
+    "Webex",
+    LocalAppData . "\CiscoSparkLauncher\CiscoCollabHost.exe",
+    LocalAppData . "\CiscoSparkLauncher"
+  )
+}
+
+; Grupos de aplicaciones entre los que tabular
+Groups := Map(
+    "Terminal", "ahk_exe WindowsTerminal.exe",
+    "Web", "ahk_class MozillaWindowClass",
+    "Code", "ahk_exe Code.exe",
+    "Email", "ahk_exe OUTLOOK.EXE"
+)
+
+for groupName, windowTitle in Groups {
+  GroupAdd(groupName, windowTitle)
+}
+
+; Segunda versión de "ActivateGroupOrRun". La primera (más abajo)
+; localizaba todas las ventanas del grupo y las activaba a la vez.
+; Esta versión utiliza "GroupActivate" para activarlas alternativamente.
+ActivateGroupOrRun(windowGroup, command, folder:="") {
+  windowTitle := Groups[windowGroup]
+  if WinExist(windowTitle) {
+    handle := GroupActivate(windowGroup, "R")
+    if handle == 0 { ; The only window in group is the already active one
+      if WinGetMinMax() == -1 {
+        WinRestore()
+      }      
+    } else { ; We activated a different window in the group
+      ahk_id := "ahk_id " . handle
+      if WinGetMinMax(ahk_id) == -1 {
+        WinRestore(ahk_id)
+      }
+    }
+  } else {
+    if folder == "" {
+      Run command
+    } else {
+      Run command, folder
+    }
+    handle := WinWait(windowTitle, , 3)
+    if handle != 0 {
+      WinActivate
+    }
+  }
+}
+
+; Versión antigua, que no gestionaba la alternancia
+; entre ventanas de un mismo grupo
+DeprecatedActivateGroupOrRun(windowGroup, command, folder:="") {
+  windowTitle := Groups[windowGroup]
   count := 0
   for , wnd in WinGetList(windowTitle) {
     ahk_id := "ahk_id " . wnd
@@ -44,66 +124,39 @@ ActivateManyWindows(windowTitle, command, folder:="") {
     } else {
       Run command, folder
     }
+    handle := WinWait(windowTitle, , 3)
+    if handle != 0 {
+      WinActivate
+    }
   }
 }
-
-#1::{
-  ActivateSingleWindow(
-    "ahk_exe Skype.exe",
-    "Skype"
-  )
-}
-
-#2::{
-  ActivateSingleWindow(
-    "ahk_exe slack.exe",
-    LocalAppData . "\slack\slack.exe",
-    LocalAppData . "\slack"
-  )
-}
-
-#3::{
-  ActivateSingleWindow(
-    "ahk_class TeamsWebView",
-    "ms-teams"
-  )
-}
-
-#4::{
-  ActivateSingleWindow(
-    "Webex",
-    LocalAppData . "\CiscoSparkLauncher\CiscoCollabHost.exe",
-    LocalAppData . "\CiscoSparkLauncher"
-  )
-}
-
+    
 #t::{
-  ActivateManyWindows(
-    "ahk_exe WindowsTerminal.exe",
+  ActivateGroupOrRun(
+    "Terminal",
     "wt.exe"
   )
 }
 
 #w::{
-  ActivateManyWindows(
-    "ahk_class MozillaWindowClass",
+  ActivateGroupOrRun(
+    "Web",
     ProgramFiles . "\Mozilla Firefox\firefox.exe",
     ProgramFiles . "\Mozilla Firefox"
   )
 }
 
 #c::{
-  ActivateManyWindows(
-    "ahk_exe Code.exe",
+  ActivateGroupOrRun(
+    "Code",
     LocalAppData . "\Programs\Microsoft VS Code\Code.exe",
     LocalAppData . "\Programs\Microsoft VS Code"
   )
 }
 
 #e::{
-  ActivateManyWindows(
-    "ahk_exe OUTLOOK.EXE",
+  ActivateGroupOrRun(
+    "Email",
     ProgramFiles . "\Microsoft Office\root\Office16\OUTLOOK.EXE"
   )
 }
-
