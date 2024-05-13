@@ -77,6 +77,7 @@ GroupAdd("Social", "ahk_exe Skype.exe")
 GroupAdd("Social", "ahk_exe slack.exe")
 GroupAdd("Social", "ahk_class TeamsWebView")
 GroupAdd("Social", "Webex")
+GroupAdd("Social", "ahk_exe CiscoCollabHost.exe")
 
 MButton & º::
 #º::{
