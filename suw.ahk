@@ -38,7 +38,8 @@ ActivateSingleOrRun(windowTitle, command, folder:="") {
   }
 }
 
-MButton & 1::
+XButton1 & 1::
+XButton2 & 1::
 #1::{
   ActivateSingleOrRun(
     "ahk_exe Skype.exe",
@@ -47,7 +48,7 @@ MButton & 1::
   )
 }
 
-MButton & 2::
+XButton1 & 2::
 #2::{
   ActivateSingleOrRun(
     "ahk_exe slack.exe",
@@ -56,7 +57,7 @@ MButton & 2::
   )
 }
 
-MButton & 3::
+XButton1 & 3::
 #3::{
   ActivateSingleOrRun(
     "ahk_class TeamsWebView",
@@ -64,7 +65,7 @@ MButton & 3::
   )
 }
 
-MButton & 4::
+XButton1 & 4::
 #4::{
   ActivateSingleOrRun(
     "Webex",
@@ -79,7 +80,7 @@ GroupAdd("Social", "ahk_class TeamsWebView")
 GroupAdd("Social", "Webex")
 GroupAdd("Social", "ahk_exe CiscoCollabHost.exe")
 
-MButton & º::
+XButton1 & º::
 #º::{
   GroupActivate("Social")
 }
@@ -153,7 +154,7 @@ DeprecatedActivateGroupOrRun(windowGroup, command, folder:="") {
   }
 }
 
-MButton & t::
+XButton1 & t::
 #t::{
   ActivateGroupOrRun(
     "Terminal",
@@ -161,7 +162,7 @@ MButton & t::
   )
 }
 
-MButton & w::
+XButton1 & w::
 #w::{
   ActivateGroupOrRun(
     "Web",
@@ -170,7 +171,7 @@ MButton & w::
   )
 }
 
-MButton & c::
+XButton1 & c::
 #c::{
   ActivateGroupOrRun(
     "Code",
@@ -179,7 +180,7 @@ MButton & c::
   )
 }
 
-MButton & e::
+XButton1 & e::
 #e::{
   ActivateGroupOrRun(
     "Email",
