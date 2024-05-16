@@ -17,76 +17,12 @@ LocalAppData := EnvGet("LocalAppData")
 ProgramFiles := EnvGet(A_Is64bitOS ? "ProgramW6432" : "ProgramFiles")
 ProgramX86 := EnvGet(A_Is64bitOS ? "ProgramFiles(x86)" : "ProgramFiles")
 
-; Activar ventana si existe, o ejecutar app en otro caso.
-ActivateSingleOrRun(windowTitle, command, folder:="") {
-  if WinExist(windowTitle) {
-    minimized := WinGetMinMax()
-    if minimized == -1 {
-      WinRestore
-    }
-    WinActivate
-  } else {
-    if folder != "" {
-      Run command, folder
-    } else {
-      Run command
-    }
-    handle := WinWait(windowTitle, , 3)
-    if handle != 0 {
-      WinActivate
-    }
-  }
-}
-
-XButton1 & 1::
-XButton2 & 1::
-#1::{
-  ActivateSingleOrRun(
-    "ahk_exe Skype.exe",
-    ProgramX86 . "\Microsoft\Skype for Desktop\Skype.exe",
-    ProgramX86 . "\Microsoft\Skype for Desktop"
-  )
-}
-
-XButton1 & 2::
-#2::{
-  ActivateSingleOrRun(
-    "ahk_exe slack.exe",
-    LocalAppData . "\slack\slack.exe",
-    LocalAppData . "\slack"
-  )
-}
-
-XButton1 & 3::
-#3::{
-  ActivateSingleOrRun(
-    "ahk_class TeamsWebView",
-    "ms-teams"
-  )
-}
-
-XButton1 & 4::
-#4::{
-  ActivateSingleOrRun(
-    "Webex",
-    LocalAppData . "\CiscoSparkLauncher\CiscoCollabHost.exe",
-    LocalAppData . "\CiscoSparkLauncher"
-  )
-}
-
-GroupAdd("Social", "ahk_exe Skype.exe")
-GroupAdd("Social", "ahk_exe slack.exe")
-GroupAdd("Social", "ahk_class TeamsWebView")
-GroupAdd("Social", "Webex")
-GroupAdd("Social", "ahk_exe CiscoCollabHost.exe")
-
-XButton1 & º::
-#º::{
-  GroupActivate("Social")
-}
-
 ; Grupos de aplicaciones entre los que tabular
 Groups := Map(
+    "Skype", "ahk_exe Skype.exe",
+    "Slack", "ahk_exe slack.exe",
+    "Teams", "ahk_class TeamsWebView",
+    "Webex", "ahk_exe CiscoCollabHost.exe",
     "Terminal", "ahk_exe WindowsTerminal.exe",
     "Web", "ahk_class MozillaWindowClass",
     "Code", "ahk_exe Code.exe",
@@ -96,6 +32,18 @@ Groups := Map(
 for groupName, windowTitle in Groups {
   GroupAdd(groupName, windowTitle)
 }
+
+; El único grupo con más de un tipo de ventana que tengo de momento
+GroupAdd("Social", Groups["Skype"])
+GroupAdd("Social", Groups["Slack"])
+GroupAdd("Social", Groups["Teams"])
+GroupAdd("Social", Groups["Webex"])
+
+XButton1 & º::
+#º::{
+  GroupActivate("Social")
+}
+
 
 ; Segunda versión de "ActivateGroupOrRun". La primera (más abajo)
 ; localizaba todas las ventanas del grupo y las activaba a la vez.
@@ -152,6 +100,42 @@ DeprecatedActivateGroupOrRun(windowGroup, command, folder:="") {
       WinActivate
     }
   }
+}
+
+XButton1 & 1::
+XButton2 & 1::
+#1::{
+  ActivateGroupOrRun(
+    "Skype",
+    ProgramX86 . "\Microsoft\Skype for Desktop\Skype.exe",
+    ProgramX86 . "\Microsoft\Skype for Desktop"
+  )
+}
+
+XButton1 & 2::
+#2::{
+  ActivateGroupOrRun(
+    "Slack",
+    LocalAppData . "\slack\slack.exe",
+    LocalAppData . "\slack"
+  )
+}
+
+XButton1 & 3::
+#3::{
+  ActivateGroupOrRun(
+    "Teams",
+    "ms-teams"
+  )
+}
+
+XButton1 & 4::
+#4::{
+  ActivateGroupOrRun(
+    "Webex",
+    LocalAppData . "\CiscoSparkLauncher\CiscoCollabHost.exe",
+    LocalAppData . "\CiscoSparkLauncher"
+  )
 }
 
 XButton1 & t::
